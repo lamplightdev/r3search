@@ -20,7 +20,9 @@ self.addEventListener('fetch', function (event) {
     caches.match(event.request)
       .then(function(response) {
         // Cache hit - return response
+        console.log(event.request, response);
         if (response) {
+
           return response;
         }
 
