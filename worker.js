@@ -15,9 +15,6 @@ self.addEventListener('install', function (event) {
   );
 });
 
-console.log('test');
-
-/*
 self.addEventListener('fetch', function (event) {
   event.respondWith(
     caches.match(event.request)
@@ -28,8 +25,6 @@ self.addEventListener('fetch', function (event) {
         }
 
         return fetch(event.request);
-      }
-    );
+      })
   );
 });
-*/
