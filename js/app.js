@@ -1,4 +1,4 @@
-(function() {
+//(function() {
 
   navigator.serviceWorker.register('/r3search/worker.js', {
     scope: 'r3search'
@@ -8,4 +8,4 @@
     console.log('fail', err);
   });
 
-}());
+//}());
