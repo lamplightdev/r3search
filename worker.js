@@ -10,6 +10,7 @@ self.addEventListener('install', function (event) {
         console.log('Opened cache: ' + cacheVersion);
         return cache.addAll([
           'index.html',
+          'dog.html',
           'js/app.js',
           'css/app.css',
           'img/dog.jpg'
