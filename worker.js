@@ -1,6 +1,6 @@
 importScripts('js/serviceworker-cache-polyfill.js');
 //vbump2
-var cacheVersion = 'test-14';
+var cacheVersion = 'test-15';
 
 self.addEventListener('install', function (event) {
   console.log('install');
@@ -13,7 +13,9 @@ self.addEventListener('install', function (event) {
           'dog.html',
           'js/app.js',
           'css/app.css',
-          'img/dog.jpg'
+          'img/dog.jpg',
+          'img/dog_.jpg',
+          'article'
         ]);
       })
   );
@@ -27,14 +29,30 @@ self.addEventListener('fetch', function (event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        // Cache hit - return response
-        console.log(event.request, response);
-        if (response) {
 
+        if (response) {
           return response;
         }
 
-        return fetch(event.request);
+        var fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(
+          function(response) {
+            //if(!response || response.status !== 200 || response.type !== 'basic') {
+            //  return response;
+            //}
+
+            var responseToCache = response.clone();
+
+            caches.open(cacheVersion)
+              .then(function(cache) {
+                var cacheRequest = event.request.clone();
+                cache.put(cacheRequest, responseToCache);
+              });
+
+            return response;
+          }
+        );
       })
   );
 });
@@ -42,14 +60,15 @@ self.addEventListener('fetch', function (event) {
 self.addEventListener('activate', function (event) {
   console.log('activate');
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (cacheName !== cacheVersion) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then(function(cacheNames) {
+        return Promise.all(
+          cacheNames.map(function(cacheName) {
+            if (cacheName !== cacheVersion) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
   );
 });

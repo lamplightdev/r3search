@@ -1,25 +1,36 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
 
-  <head>
+    <title>R3SEARCH</title>
+
 
     <link rel='stylesheet' href='css/app.css'>
     <link rel="manifest" href="manifest.json">
+</head>
 
-  </head>
+<body>
+
+  <h1>Home</h1>
+
+  <img src='img/dog.jpg' alt='a dog'>
+
+  <a href='dog.html'>dog</a>
+  <a href='#' class='ajax-get'>ajax get</a>
 
 
-  <body>
+  <form class='search' action='' method='POST'>
+    <input type='text' name='query'>
+    <button type='submit'>Search</button>
+  </form>
 
-    <h1>Home</h1>
+  <h1>Article</h1>
+  <div class='article'></div>
 
-    <img src='img/dog.jpg' alt='a dog'>
+  <script src='js/app.js'></script>
 
-    <a href='dog.html'>home</a>
-
-    <script src='js/app.js'></script>
-
-  </body>
-
+</body>
 
 </html>
