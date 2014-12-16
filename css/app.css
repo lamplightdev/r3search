@@ -1,7 +1,21 @@
 html {
   font-family: Arial;
+  font-size: 16px;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.query-load {
+  display: inline-block;
+
+  margin-right: 1em;
+}
+
+img.thumb {
+  width: 100px;
+  height: auto;
+  float: left;
+  margin: 0 1em 1em 0;
 }
