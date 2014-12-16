@@ -9,26 +9,41 @@
 
     <link rel='stylesheet' href='css/app.css'>
     <link rel="manifest" href="manifest.json">
+
+    <script src="//use.typekit.net/aqb7rox.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
 </head>
 
 <body>
 
-  <h1>R3SEARCH</h1>
+  <header>
+    <div class='inner'>
+      <h1>R3SEARCH</h1>
+    </div>
+  </header>
 
+  <div class='content'>
+    <div class='inner'>
+      <div class='queries'>
+      </div>
 
-  <div class='queries'>
+      <form class='search' action='' method='POST'>
+        <input type='text' name='query'>
+        <button type='submit'>Search</button>
+      </form>
+
+      <div class='results'>
+      </div>
+
+      <h1 class='title'></h1>
+      <div class='article'></div>
+    </div>
   </div>
 
-  <form class='search' action='' method='POST'>
-    <input type='text' name='query'>
-    <button type='submit'>Search</button>
-  </form>
-
-  <div class='results'>
-  </div>
-
-  <h1 class='title'></h1>
-  <div class='article'></div>
+  <footer>
+    <div class='inner'>
+    </div>
+  </footer>
 
   <script src='js/app.js'></script>
 

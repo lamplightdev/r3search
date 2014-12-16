@@ -91,14 +91,19 @@
       resultsContainer.innerHTML = '';
 
       var results = response[1];
-      results.forEach(function (result) {
-        var link = document.createElement('a');
-        link.textContent = result;
-        link.setAttribute('href', '#');
-        link.setAttribute('data-query', result);
-        link.setAttribute('class', 'query-load');
-        resultsContainer.appendChild(link);
-      });
+
+      if (results.length === 1) {
+        find (results[0]);
+      } else {
+        results.forEach(function (result) {
+          var link = document.createElement('a');
+          link.textContent = result;
+          link.setAttribute('href', '#');
+          link.setAttribute('data-query', result);
+          link.setAttribute('class', 'query-load');
+          resultsContainer.appendChild(link);
+        });
+      }
 
     }, function (err) {
       console.log('error', err);

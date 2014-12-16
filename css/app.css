@@ -1,10 +1,52 @@
 html {
-  font-family: Arial;
+  font-family: pt-serif, sans-serif;
   font-size: 16px;
+
+  background-color: #eee;
+  color: #333;
 }
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: bebas-neue, sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+a {
+  color: #a71b22;
+}
+
+header, .content, footer {
+  padding: 0 2em;
+}
+
+header {
+
+}
+
+  header h1 {
+    font-size: 4em;
+  }
+
+.inner {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.content {
+  padding: 2em;
+  background-color: white;
 }
 
 .query-load {
