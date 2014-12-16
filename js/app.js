@@ -45,12 +45,17 @@
       queriesContainer.innerHTML = '';
       queries = JSON.parse(queries);
       queries.forEach(function (query) {
+        var div = document.createElement('div');
+        div.setAttribute('class', 'card');
+
         var link = document.createElement('a');
         link.textContent = query;
         link.setAttribute('href', '#');
         link.setAttribute('data-query', query);
         link.setAttribute('class', 'query-load');
-        queriesContainer.appendChild(link);
+
+        div.appendChild(link);
+        queriesContainer.appendChild(div);
       });
     }
   }

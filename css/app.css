@@ -1,7 +1,4 @@
 html {
-  font-family: pt-serif, sans-serif;
-  font-size: 16px;
-
   background-color: #eee;
   color: #333;
 }
@@ -13,6 +10,9 @@ html {
 body {
   padding: 0;
   margin: 0;
+
+  font-family: pt-serif, sans-serif;
+  font-size: 14px;
 }
 
 h1, h2, h3 {
@@ -32,20 +32,23 @@ header, .content, footer {
 }
 
 header {
-
+  position: fixed;
+  background-color: #eee;
+  left: 0;
+  right: 0;
 }
 
   header h1 {
-    font-size: 4em;
+    font-size: 1.5em;
   }
 
 .inner {
-  max-width: 500px;
+  max-width: 320px;
   margin: 0 auto;
 }
 
 .content {
-  padding: 2em;
+  padding: 5em 2em 2em 2em;
   background-color: white;
 }
 
@@ -55,9 +58,74 @@ header {
   margin-right: 1em;
 }
 
+.search {
+  display: inline-block;
+  width: 100%;
+}
+
+  .search input[type=text], .search button[type=submit] {
+    float: left;
+  }
+
+  .search input[type=text] {
+    border: 1px solid #eee;
+    border-right: 0;
+    width: 70%;
+    padding: 0 1em;
+    font-size: 1em;
+    height: 3em;
+  }
+
+  .search button[type=submit] {
+    border: 1px solid #eee;
+    background-color: #333;
+    color: white;
+    width: 20%;
+    font-size: 1em;
+    height: 3em;
+
+    font-family: bebas-neue;
+  }
+
+  .search button.history {
+    border: 0;
+    background-color: transparent;
+    width: 10%;
+    height: 3em;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+    .search button.history svg {
+      width: 1.5em;
+      height: 1.5em;
+      vertical-align: middle;
+
+      transition: all 0.3s linear 0s;
+    }
+
+    .search button.history svg path {
+      transition: all 0.3s linear 0s;
+    }
+
+    .search button.history:hover svg, .search button.history:active svg {
+      transform: rotate(180deg);
+    }
+
+    .search button.history:hover svg path, .search button.history:active svg path {
+      fill: red;
+    }
+
+.results {
+}
+
 img.thumb {
   width: 100px;
   height: auto;
   float: left;
   margin: 0 1em 1em 0;
+}
+
+.article {
+  line-height: 1.5em;
 }

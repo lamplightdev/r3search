@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, minimum-scale=1.0, minimal-ui">
 
     <title>R3SEARCH</title>
 
@@ -24,15 +25,22 @@
 
   <div class='content'>
     <div class='inner'>
-      <div class='queries'>
-      </div>
 
       <form class='search' action='' method='POST'>
         <input type='text' name='query'>
         <button type='submit'>Search</button>
+        <button class='history'>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+            <path d="M367 295.5H227.5V142h45v108.5H367V295.5z M256 95c-88.992 0-161 72.022-161 161 c0 89 72 161 161 161c88.992 0 161-72.023 161-161C417 167 345 95 256 95 M256 50c113.771 0 206 92.2 206 206 s-92.229 206-206 206S50 369.8 50 256S142.229 50 256 50z"/>
+          </svg>
+
+        </button>
       </form>
 
       <div class='results'>
+      </div>
+
+      <div class='queries'>
       </div>
 
       <h1 class='title'></h1>
