@@ -1,7 +1,7 @@
 (function() {
 
   var lsQueryName = 'r3search-ls-queries';
-  var queriesContainer, resultsContainer;
+  var queriesContainer, resultsContainer, form;
 
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/r3search/worker.js', {
@@ -21,14 +21,30 @@
     resultsContainer.addEventListener('click', clickFind);
     listQueries();
 
-    var links = document.querySelectorAll('.ajax-get');
-    for(var i=0; i<links.length; i++) {
-      links[i].addEventListener('click', linkClick);
-    }
-
-    var form = document.querySelector('.search');
+    form = document.querySelector('.search');
     form.addEventListener('submit', formSubmit);
+
+    var buttonHistory = document.querySelector('.history');
+    buttonHistory.addEventListener('click', function (event) {
+      form.classList.toggle('history-open');
+    });
   });
+
+  function openHistory () {
+    form.classList.add('history-open');
+  }
+
+  function closeHistory () {
+    form.classList.remove('history-open');
+  }
+
+  function openSuggestions () {
+    resultsContainer.classList.add('results-open');
+  }
+
+  function closeSuggestions () {
+    resultsContainer.classList.remove('results-open');
+  }
 
   function clickFind (event) {
     if (event.target.classList.contains('query-load')) {
@@ -36,6 +52,9 @@
 
       var query = event.target.dataset.query;
       find(query);
+
+      closeHistory();
+      closeSuggestions();
     }
   }
 
@@ -45,8 +64,6 @@
       queriesContainer.innerHTML = '';
       queries = JSON.parse(queries);
       queries.forEach(function (query) {
-        var div = document.createElement('div');
-        div.setAttribute('class', 'card');
 
         var link = document.createElement('a');
         link.textContent = query;
@@ -54,8 +71,7 @@
         link.setAttribute('data-query', query);
         link.setAttribute('class', 'query-load');
 
-        div.appendChild(link);
-        queriesContainer.appendChild(div);
+        queriesContainer.appendChild(link);
       });
     }
   }
@@ -84,11 +100,13 @@
   }
 
   function search (query) {
+    closeHistory();
+
     jsonp('http://en.wikipedia.org/w/api.php', {
       format: 'json',
       action: 'opensearch',
       search: query,
-      limit: 10,
+      limit: 5,
       titles: query
     }, function (response) {
       console.log('success', response);
@@ -108,6 +126,8 @@
           link.setAttribute('class', 'query-load');
           resultsContainer.appendChild(link);
         });
+
+        openSuggestions();
       }
 
     }, function (err) {
@@ -160,43 +180,6 @@
     }, function (err) {
       console.log('error', err);
     });
-  }
-
-  function linkClick (event) {
-    event.preventDefault();
-
-    jsonp('http://en.wikipedia.org/w/api.php', {
-      format: 'json',
-      action: 'query',
-      continue: '',
-      prop: 'extracts|pageimages',
-      redirects: true,
-      titles: 'James_Cordon'
-    }, function (response) {
-      console.log('success', response);
-      for(var pageId in response.query.pages) {
-        document.querySelectorAll('.article')[0].innerHTML = response.query.pages[pageId].extract;
-      }
-    }, function (err) {
-      console.log('error', err);
-    });
-  }
-
-  function ajaxGet (url, data, onsuccess, onerror) {
-    var request = new XMLHttpRequest();
-    request.open('GET', url + '?' + getParams(data), true);
-
-    request.onload = function() {
-      if (this.status >= 200 && this.status < 400){
-        onsuccess(true, this);
-      } else {
-        onsuccess(false, this);
-      }
-    };
-
-    request.onerror = onerror;
-
-    request.send();
   }
 
   function jsonp (url, data, callback, onerror) {

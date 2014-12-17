@@ -53,12 +53,17 @@ header {
 }
 
 .query-load {
-  display: inline-block;
+  display: block;
 
-  margin-right: 1em;
+  border-bottom: 1px solid #eee;
+  padding: 0.5em;
 }
+  .query-load:last-child {
+    border-bottom: 0;
+  }
 
 .search {
+  position: relative;
   display: inline-block;
   width: 100%;
 }
@@ -108,22 +113,42 @@ header {
       transition: all 0.3s linear 0s;
     }
 
-    .search button.history:hover svg, .search button.history:active svg {
+    .search.history-open button.history svg {
       transform: rotate(180deg);
     }
 
-    .search button.history:hover svg path, .search button.history:active svg path {
+    .search.history-open button.history svg path {
       fill: red;
     }
 
+    .search .queries {
+      position: absolute;
+      top: 4em;
+      left: 0;
+      right: 0;
+      padding: 1em;
+      border: 1px solid #eee;
+      background-color: white;
+      display: none;
+    }
+
+    .search.history-open .queries {
+      display: block;
+    }
+
 .results {
+  display: none;
 }
+
+  .results.results-open {
+    display: block;
+  }
 
 img.thumb {
   width: 100px;
   height: auto;
   float: left;
-  margin: 0 1em 1em 0;
+  margin: 0.2em 1em 1em 0;
 }
 
 .article {
