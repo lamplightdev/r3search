@@ -33,6 +33,7 @@ header, .content, footer {
 
 header {
   position: fixed;
+  z-index: 2;
   background-color: #eee;
   left: 0;
   right: 0;
