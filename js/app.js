@@ -173,6 +173,7 @@
 
   function find (query) {
     article.innerHTML = '';
+    title.innerHTML = '';
     showArticleLoading();
 
     jsonp('//en.wikipedia.org/w/api.php', {
@@ -191,33 +192,35 @@
       hideArticleLoading();
 
       console.log('success', response);
+
+      var page;
       for(var pageId in response.query.pages) {
-
-
-        var extract = response.query.pages[pageId].extract;
-        var title = response.query.pages[pageId].title;
-        var thumb = false;
-
-        if (response.query.pages[pageId].thumbnail && response.query.pages[pageId].thumbnail.source) {
-          thumb = response.query.pages[pageId].thumbnail.source;
-        }
-
-        if (!extract) {
-          extract = 'No matching article';
-        } else {
-          saveQuery(title);
-        }
-
-        if (thumb) {
-          var img = document.createElement('img');
-          img.setAttribute('src', thumb);
-          img.setAttribute('class', 'thumb');
-          document.querySelector('.article').appendChild(img);
-        }
-
-        article.innerHTML += extract;
-        title.textContent = title;
+        page = response.query.pages[pageId];
       }
+
+      var extract = page.extract;
+      var titleText = page.title;
+      var thumb = false;
+
+      if (page.thumbnail && page.thumbnail.source) {
+        thumb = page.thumbnail.source;
+      }
+
+      if (!extract) {
+        extract = 'No matching article';
+      } else {
+        saveQuery(titleText);
+      }
+
+      if (thumb) {
+        var img = document.createElement('img');
+        img.setAttribute('src', thumb);
+        img.setAttribute('class', 'thumb');
+        article.appendChild(img);
+      }
+
+      article.innerHTML += extract;
+      title.textContent = titleText;
     }, function (err) {
       hideArticleLoading();
 
