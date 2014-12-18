@@ -5,6 +5,9 @@ html {
 
 * {
   box-sizing: border-box;
+
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -94,6 +97,7 @@ header {
   }
 
   .search button.history {
+    outline: 0;
     border: 0;
     background-color: transparent;
     width: 10%;
@@ -112,6 +116,7 @@ header {
 
     .search button.history svg path {
       transition: all 0.3s linear 0s;
+      fill: #aaa;
     }
 
     .search.history-open button.history svg {
@@ -119,10 +124,10 @@ header {
     }
 
     .search.history-open button.history svg path {
-      fill: red;
+      fill: #333;
     }
 
-    .search .queries, .search .results {
+    .search .histories, .search .results {
       position: absolute;
       top: 4em;
       left: 0;
@@ -133,7 +138,16 @@ header {
       display: none;
     }
 
-    .search.history-open .queries {
+    .search .results {
+      right: auto;
+      width: 70%;
+    }
+
+      .search .results .loading {
+        width: 2em;
+      }
+
+    .search.history-open .histories {
       display: block;
     }
 
@@ -152,3 +166,14 @@ img.thumb {
 .article {
   line-height: 1.5em;
 }
+
+.loading {
+  display: none;
+  margin: 0 auto;
+  width: 3em;
+  height: auto;
+}
+
+  .loading.show {
+    display: block;
+  }

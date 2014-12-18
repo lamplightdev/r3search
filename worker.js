@@ -11,7 +11,8 @@ self.addEventListener('install', function (event) {
         return cache.addAll([
           '/r3sarch/',
           '/r3search/js/app.js',
-          '/r3search/css/app.css'
+          '/r3search/css/app.css',
+          '/r3search/img/loading.svg'
         ]);
       })
   );

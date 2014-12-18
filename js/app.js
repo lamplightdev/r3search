@@ -1,7 +1,7 @@
 (function() {
 
-  var lsQueryName = 'r3search-ls-queries';
-  var queriesContainer, resultsContainer, form;
+  var lsQueryName = 'r3search-ls-history';
+  var historiesContainer, resultsContainer, form, article, title, articleLoading, resultsLoading;
 
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/r3search/worker.js', {
@@ -14,23 +14,34 @@
   }
 
   document.addEventListener("DOMContentLoaded", function (event) {
-    queriesContainer = document.querySelector('.queries');
+    historiesContainer = document.querySelector('.histories');
     resultsContainer = document.querySelector('.results');
 
-    queriesContainer.addEventListener('click', clickFind);
+    article = document.querySelector('.article');
+    title = document.querySelector('.title');
+
+    articleLoading = document.querySelector('.article-loading');
+    resultsLoading = document.querySelector('.results-loading');
+
+    historiesContainer.addEventListener('click', clickFind);
     resultsContainer.addEventListener('click', clickFind);
-    listQueries();
+    updateHistory();
 
     form = document.querySelector('.search');
     form.addEventListener('submit', formSubmit);
 
     var buttonHistory = document.querySelector('.history');
     buttonHistory.addEventListener('click', function (event) {
-      form.classList.toggle('history-open');
+      if (form.classList.contains('history-open')) {
+        closeHistory();
+      } else {
+        openHistory();
+      }
     });
   });
 
   function openHistory () {
+    closeSuggestions();
     form.classList.add('history-open');
   }
 
@@ -39,11 +50,29 @@
   }
 
   function openSuggestions () {
+    closeHistory();
     resultsContainer.classList.add('results-open');
   }
 
   function closeSuggestions () {
     resultsContainer.classList.remove('results-open');
+  }
+
+  function showResultsLoading () {
+    resultsLoading.classList.add('show');
+  }
+
+  function hideResultsLoading () {
+    resultsLoading.classList.remove('show');
+
+  }
+
+  function showArticleLoading () {
+    articleLoading.classList.add('show');
+  }
+
+  function hideArticleLoading () {
+    articleLoading.classList.remove('show');
   }
 
   function clickFind (event) {
@@ -58,12 +87,12 @@
     }
   }
 
-  function listQueries () {
-    var queries = localStorage.getItem(lsQueryName);
-    if (queries) {
-      queriesContainer.innerHTML = '';
-      queries = JSON.parse(queries);
-      queries.forEach(function (query) {
+  function updateHistory () {
+    var histories = localStorage.getItem(lsQueryName);
+    if (histories) {
+      historiesContainer.innerHTML = '';
+      histories = JSON.parse(histories);
+      histories.forEach(function (query) {
 
         var link = document.createElement('a');
         link.textContent = query;
@@ -71,26 +100,26 @@
         link.setAttribute('data-query', query);
         link.setAttribute('class', 'query-load');
 
-        queriesContainer.appendChild(link);
+        historiesContainer.appendChild(link);
       });
     }
   }
 
   function saveQuery (query) {
-    var queries = localStorage.getItem(lsQueryName);
-    if (queries) {
-      queries = JSON.parse(queries);
+    var histories = localStorage.getItem(lsQueryName);
+    if (histories) {
+      histories = JSON.parse(histories);
     } else {
-      queries = [];
+      histories = [];
     }
 
-    if(queries.indexOf(query) === -1) {
-      queries.push(query);
+    if(histories.indexOf(query) === -1) {
+      histories.push(query);
     }
 
-    localStorage.setItem(lsQueryName, JSON.stringify(queries));
+    localStorage.setItem(lsQueryName, JSON.stringify(histories));
 
-    listQueries();
+    updateHistory();
   }
 
   function formSubmit (event) {
@@ -102,6 +131,12 @@
   function search (query) {
     closeHistory();
 
+    var resultsList = resultsContainer.querySelector('.results-list');
+
+    resultsList.innerHTML = '';
+    showResultsLoading();
+    openSuggestions();
+
     jsonp('//en.wikipedia.org/w/api.php', {
       format: 'json',
       action: 'opensearch',
@@ -109,9 +144,9 @@
       limit: 5,
       titles: query
     }, function (response) {
-      console.log('success', response);
+      hideResultsLoading();
 
-      resultsContainer.innerHTML = '';
+      console.log('success', response);
 
       var results = response[1];
 
@@ -124,18 +159,22 @@
           link.setAttribute('href', '#');
           link.setAttribute('data-query', result);
           link.setAttribute('class', 'query-load');
-          resultsContainer.appendChild(link);
+          resultsList.appendChild(link);
         });
 
-        openSuggestions();
       }
 
     }, function (err) {
+      hideResultsLoading();
+
       console.log('error', err);
     });
   }
 
   function find (query) {
+    article.innerHTML = '';
+    showArticleLoading();
+
     jsonp('//en.wikipedia.org/w/api.php', {
       format: 'json',
       action: 'query',
@@ -149,9 +188,11 @@
       redirects: true,
       titles: query
     }, function (response) {
+      hideArticleLoading();
+
       console.log('success', response);
       for(var pageId in response.query.pages) {
-        document.querySelector('.article').innerHTML = '';
+
 
         var extract = response.query.pages[pageId].extract;
         var title = response.query.pages[pageId].title;
@@ -174,10 +215,12 @@
           document.querySelector('.article').appendChild(img);
         }
 
-        document.querySelector('.article').innerHTML += extract;
-        document.querySelector('.title').textContent = title;
+        article.innerHTML += extract;
+        title.textContent = title;
       }
     }, function (err) {
+      hideArticleLoading();
+
       console.log('error', err);
     });
   }
