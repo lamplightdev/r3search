@@ -1,6 +1,6 @@
 importScripts('js/serviceworker-cache-polyfill.js');
 //vbump2
-var cacheVersion = 'test-15';
+var cacheVersion = 'test-16';
 
 self.addEventListener('install', function (event) {
   console.log('install');
@@ -9,22 +9,18 @@ self.addEventListener('install', function (event) {
       .then(function(cache) {
         console.log('Opened cache: ' + cacheVersion);
         return cache.addAll([
-          'index.html',
-          'dog.html',
-          'js/app.js',
-          'css/app.css',
-          'img/dog.jpg',
-          'img/dog_.jpg',
-          'article'
+          '/r3sarch/',
+          '/r3search/js/app.js',
+          '/r3search/css/app.css'
         ]);
       })
   );
 });
 
 self.addEventListener('fetch', function (event) {
-  console.log('fetch: ' + cacheVersion);
+  //console.log('fetch: ' + cacheVersion);
   caches.keys().then(function(cacheNames) {
-    console.log(cacheNames);
+    //console.log(cacheNames);
   });
   event.respondWith(
     caches.match(event.request)
@@ -47,6 +43,7 @@ self.addEventListener('fetch', function (event) {
             caches.open(cacheVersion)
               .then(function(cache) {
                 var cacheRequest = event.request.clone();
+                console.log(cacheRequest, responseToCache);
                 cache.put(cacheRequest, responseToCache);
               });
 

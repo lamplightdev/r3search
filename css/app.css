@@ -122,7 +122,7 @@ header {
       fill: red;
     }
 
-    .search .queries {
+    .search .queries, .search .results {
       position: absolute;
       top: 4em;
       left: 0;
@@ -137,13 +137,10 @@ header {
       display: block;
     }
 
-.results {
-  display: none;
-}
+      .search .results.results-open {
+        display: block;
+      }
 
-  .results.results-open {
-    display: block;
-  }
 
 img.thumb {
   width: 100px;

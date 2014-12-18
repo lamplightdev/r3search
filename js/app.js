@@ -102,7 +102,7 @@
   function search (query) {
     closeHistory();
 
-    jsonp('https://en.wikipedia.org/w/api.php', {
+    jsonp('//en.wikipedia.org/w/api.php', {
       format: 'json',
       action: 'opensearch',
       search: query,
@@ -136,7 +136,7 @@
   }
 
   function find (query) {
-    jsonp('https://en.wikipedia.org/w/api.php', {
+    jsonp('//en.wikipedia.org/w/api.php', {
       format: 'json',
       action: 'query',
       continue: '',
