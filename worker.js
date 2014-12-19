@@ -58,10 +58,10 @@ self.addEventListener('fetch', function (event) {
 
             var shouldCache = false;
 
-            if (response && response.status === 200) {
-              if (response.type === 'basic') {
+            if (response) {
+              if (response.status === 200 && response.type === 'basic') {
                 shouldCache = cacheNameStatic;
-              } else { // if response isn't from our origin
+              } else if (response.type == 'opaque') { // if response isn't from our origin / doesn't support CORS
 
                 if (requestURL.hostname.indexOf('.wikipedia.org') > -1) {
                   shouldCache = cacheNameWikipedia;
