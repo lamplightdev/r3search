@@ -30,6 +30,7 @@ self.addEventListener('activate', function (event) {
         return Promise.all(
           cacheNames.map(function(cacheName) {
             if (currentCacheNames.indexOf(cacheName) === -1) {
+              // if wikipedia cache changed, remove localStorage history
               return caches.delete(cacheName);
             }
           })
@@ -56,26 +57,28 @@ self.addEventListener('fetch', function (event) {
 
             var shouldCache = false;
 
-            if(response && response.status === 200 && response.type === 'basic') {
-              shouldCache = cacheNameStatic;
-            } else { // if response returns anything but a standard success response (200) or response isn't from our origin
+            if (response && response.status === 200) {
+              if (response.type === 'basic') {
+                shouldCache = cacheNameStatic;
+              } else { // if response isn't from our origin
 
-              if (requestURL.hostname === 'en.wikipedia.org' || requestURL.hostname === 'upload.wikimedia.org') {
-                shouldCache = cacheNameWikipedia;
-              } else {
-                // just let response pass through, don't cache
+                if (requestURL.hostname === 'en.wikipedia.org' || requestURL.hostname === 'upload.wikimedia.org') {
+                  shouldCache = cacheNameWikipedia;
+                } else {
+                  // just let response pass through, don't cache
+                }
+
               }
 
-            }
+              if (shouldCache) {
+                var responseToCache = response.clone();
 
-            if (shouldCache) {
-              var responseToCache = response.clone();
-
-              caches.open(shouldCache)
-                .then(function(cache) {
-                  var cacheRequest = event.request.clone();
-                  cache.put(cacheRequest, responseToCache);
-                });
+                caches.open(shouldCache)
+                  .then(function(cache) {
+                    var cacheRequest = event.request.clone();
+                    cache.put(cacheRequest, responseToCache);
+                  });
+              }
             }
 
             return response;

@@ -66,7 +66,7 @@ footer {
   display: block;
 
   border-bottom: 1px solid #eee;
-  padding: 0.5em;
+  padding: 1em 0.5em;
 }
   .query-load:last-child {
     border-bottom: 0;
@@ -138,7 +138,7 @@ footer {
       top: 4em;
       left: 0;
       right: 0;
-      padding: 1em;
+      padding: 0 1em;
       border: 1px solid #eee;
       background-color: white;
       display: none;
@@ -178,8 +178,27 @@ img.thumb {
   margin: 0 auto;
   width: 3em;
   height: auto;
+  padding: 1em 0;
 }
 
   .loading.show {
+    display: block;
+  }
+
+.empty-list {
+  display: none;
+  padding: 1em 0;
+}
+
+  .empty-list.show {
+    display: block;
+  }
+
+.no-connection {
+  display: none;
+  padding: 1em 0;
+}
+
+  .no-connection.show {
     display: block;
   }

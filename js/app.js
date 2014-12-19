@@ -1,7 +1,16 @@
 (function() {
 
   var lsQueryName = 'r3search-ls-history';
-  var historiesContainer, resultsContainer, form, article, title, articleLoading, resultsLoading;
+  var historiesContainer,
+      resultsContainer,
+      form,
+      article,
+      title,
+      articleLoading,
+      resultsLoading,
+      resultsNone,
+      historiesNone,
+      connectionNone;
 
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/r3search/worker.js', {
@@ -22,6 +31,10 @@
 
     articleLoading = document.querySelector('.article-loading');
     resultsLoading = document.querySelector('.results-loading');
+
+    resultsNone = document.querySelector('.results .empty-list');
+    historiesNone = document.querySelector('.histories .empty-list');
+    connectionNone = document.querySelector('.results .no-connection');
 
     historiesContainer.addEventListener('click', clickFind);
     resultsContainer.addEventListener('click', clickFind);
@@ -89,8 +102,12 @@
 
   function updateHistory () {
     var histories = localStorage.getItem(lsQueryName);
-    if (histories) {
-      historiesContainer.innerHTML = '';
+    var historiesList = historiesContainer.querySelector('.histories-list');
+
+    if (histories && histories.length) {
+      historiesNone.classList.remove('show');
+
+      historiesList.innerHTML = '';
       histories = JSON.parse(histories);
       histories.forEach(function (query) {
 
@@ -100,8 +117,13 @@
         link.setAttribute('data-query', query);
         link.setAttribute('class', 'query-load');
 
-        historiesContainer.appendChild(link);
+        historiesList.appendChild(link);
       });
+
+    } else {
+
+      historiesNone.classList.add('show');
+
     }
   }
 
@@ -131,44 +153,63 @@
   function search (query) {
     closeHistory();
 
-    var resultsList = resultsContainer.querySelector('.results-list');
+    if (query) {
+      resultsNone.classList.remove('show');
+      connectionNone.classList.remove('show');
 
-    resultsList.innerHTML = '';
-    showResultsLoading();
-    openSuggestions();
+      var resultsList = resultsContainer.querySelector('.results-list');
 
-    jsonp('//en.wikipedia.org/w/api.php', {
-      format: 'json',
-      action: 'opensearch',
-      search: query,
-      limit: 5,
-      titles: query
-    }, function (response) {
-      hideResultsLoading();
+      resultsList.innerHTML = '';
+      showResultsLoading();
+      openSuggestions();
 
-      console.log('success', response);
+      jsonp('//en.wikipedia.org/w/api.php', {
+        format: 'json',
+        action: 'opensearch',
+        search: query,
+        limit: 5,
+        titles: query
+      }, function (response) {
+        hideResultsLoading();
 
-      var results = response[1];
+        console.log('success', response);
 
-      if (results.length === 1) {
-        find (results[0]);
-      } else {
-        results.forEach(function (result) {
-          var link = document.createElement('a');
-          link.textContent = result;
-          link.setAttribute('href', '#');
-          link.setAttribute('data-query', result);
-          link.setAttribute('class', 'query-load');
-          resultsList.appendChild(link);
-        });
+        var results = response[1];
 
-      }
+        if(results.length === 0) {
 
-    }, function (err) {
-      hideResultsLoading();
+          resultsNone.classList.add('show');
 
-      console.log('error', err);
-    });
+        } else {
+
+          if (results.length === 1) {
+
+            closeSuggestions();
+            find(results[0]);
+
+          } else {
+
+            results.forEach(function (result) {
+              var link = document.createElement('a');
+              link.textContent = result;
+              link.setAttribute('href', '#');
+              link.setAttribute('data-query', result);
+              link.setAttribute('class', 'query-load');
+              resultsList.appendChild(link);
+            });
+
+          }
+        }
+
+      }, function (err) {
+        hideResultsLoading();
+        connectionNone.classList.add('show');
+
+        console.log('error', err);
+      });
+    } else {
+      closeSuggestions();
+    }
   }
 
   function find (query) {
