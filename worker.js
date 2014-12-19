@@ -2,6 +2,7 @@ importScripts('js/serviceworker-cache-polyfill.js');
 //vbump2
 var cacheNameStatic = 'r3search-static-v3';
 var cacheNameWikipedia = 'r3search-wikipedia-v1';
+var cacheNameTypekit = 'r3search-typekit-v1';
 
 var currentCacheNames = [
   cacheNameStatic,
@@ -30,7 +31,7 @@ self.addEventListener('activate', function (event) {
         return Promise.all(
           cacheNames.map(function(cacheName) {
             if (currentCacheNames.indexOf(cacheName) === -1) {
-              // if wikipedia cache changed, remove localStorage history
+              // TODO: if wikipedia cache changed, remove localStorage history
               return caches.delete(cacheName);
             }
           })
@@ -62,8 +63,10 @@ self.addEventListener('fetch', function (event) {
                 shouldCache = cacheNameStatic;
               } else { // if response isn't from our origin
 
-                if (requestURL.hostname === 'en.wikipedia.org' || requestURL.hostname === 'upload.wikimedia.org') {
+                if (requestURL.hostname.indexOf('.wikipedia.org') > -1) {
                   shouldCache = cacheNameWikipedia;
+                } else if (requestURL.hostname.indexOf('.typekit.net') > -1) {
+                  shouldCache = cacheNameTypekit;
                 } else {
                   // just let response pass through, don't cache
                 }
