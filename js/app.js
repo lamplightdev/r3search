@@ -4,13 +4,13 @@
   var historiesContainer,
       resultsContainer,
       form,
+      searchBox,
       article,
       title,
       articleLoading,
       resultsLoading,
       resultsNone,
-      historiesNone,
-      connectionNone;
+      historiesNone;
 
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/r3search/worker.js', {
@@ -23,6 +23,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function (event) {
+
     historiesContainer = document.querySelector('.histories');
     resultsContainer = document.querySelector('.results');
 
@@ -34,7 +35,6 @@
 
     resultsNone = document.querySelector('.results .empty-list');
     historiesNone = document.querySelector('.histories .empty-list');
-    connectionNone = document.querySelector('.results .no-connection');
 
     historiesContainer.addEventListener('click', clickFind);
     resultsContainer.addEventListener('click', clickFind);
@@ -42,6 +42,8 @@
 
     form = document.querySelector('.search');
     form.addEventListener('submit', formSubmit);
+
+    searchBox = form.querySelector('[name=query]');
 
     var buttonHistory = document.querySelector('.history');
     buttonHistory.addEventListener('click', function (event) {
@@ -51,7 +53,24 @@
         openHistory();
       }
     });
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
+
   });
+
+  function updateNetworkStatus () {
+    if (navigator.onLine) {
+      searchBox.removeAttribute('disabled');
+      searchBox.setAttribute('placeholder', 'Search');
+    } else {
+      closeSuggestions();
+      searchBox.setAttribute('disabled', 'disabled');
+      searchBox.value = '';
+      searchBox.setAttribute('placeholder', 'No connection - try history');
+    }
+  }
 
   function openHistory () {
     closeSuggestions();
@@ -155,7 +174,6 @@
 
     if (query) {
       resultsNone.classList.remove('show');
-      connectionNone.classList.remove('show');
 
       var resultsList = resultsContainer.querySelector('.results-list');
 
@@ -203,7 +221,6 @@
 
       }, function (err) {
         hideResultsLoading();
-        connectionNone.classList.add('show');
 
         console.log('error', err);
       });

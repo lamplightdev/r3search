@@ -193,12 +193,3 @@ img.thumb {
   .empty-list.show {
     display: block;
   }
-
-.no-connection {
-  display: none;
-  padding: 1em 0;
-}
-
-  .no-connection.show {
-    display: block;
-  }
