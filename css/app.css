@@ -27,7 +27,7 @@ h1 {
 }
 
 a {
-  color: #a71b22;
+  color: rgb(205, 0, 0);
 }
 
 header, .content, footer {
@@ -43,8 +43,14 @@ header {
 }
 
   header h1 {
+    color: rgb(205, 0, 10);
     font-size: 1.5em;
   }
+
+footer {
+  padding: 2em 0;
+  font-size: 0.8em;
+}
 
 .inner {
   max-width: 320px;

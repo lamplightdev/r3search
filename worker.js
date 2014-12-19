@@ -1,15 +1,19 @@
 importScripts('js/serviceworker-cache-polyfill.js');
 //vbump2
-var cacheVersion = 'test-16';
+var cacheNameStatic = 'r3search-static-v3';
+var cacheNameWikipedia = 'r3search-wikipedia-v1';
+
+var currentCacheNames = [
+  cacheNameStatic,
+  cacheNameWikipedia
+];
 
 self.addEventListener('install', function (event) {
-  console.log('install');
   event.waitUntil(
-    caches.open(cacheVersion)
+    caches.open(cacheNameStatic)
       .then(function(cache) {
-        console.log('Opened cache: ' + cacheVersion);
         return cache.addAll([
-          '/r3sarch/',
+          '/r3search/',
           '/r3search/js/app.js',
           '/r3search/css/app.css',
           '/r3search/img/loading.svg'
@@ -18,11 +22,25 @@ self.addEventListener('install', function (event) {
   );
 });
 
+
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    caches.keys()
+      .then(function(cacheNames) {
+        return Promise.all(
+          cacheNames.map(function(cacheName) {
+            if (currentCacheNames.indexOf(cacheName) === -1) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+  );
+});
+
 self.addEventListener('fetch', function (event) {
-  //console.log('fetch: ' + cacheVersion);
-  caches.keys().then(function(cacheNames) {
-    //console.log(cacheNames);
-  });
+  var requestURL = new URL(event.request.url);
+
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
@@ -35,18 +53,30 @@ self.addEventListener('fetch', function (event) {
 
         return fetch(fetchRequest).then(
           function(response) {
-            //if(!response || response.status !== 200 || response.type !== 'basic') {
-            //  return response;
-            //}
 
-            var responseToCache = response.clone();
+            var shouldCache = false;
 
-            caches.open(cacheVersion)
-              .then(function(cache) {
-                var cacheRequest = event.request.clone();
-                console.log(cacheRequest, responseToCache);
-                cache.put(cacheRequest, responseToCache);
-              });
+            if(response && response.status === 200 && response.type === 'basic') {
+              shouldCache = cacheNameStatic;
+            } else { // if response returns anything but a standard success response (200) or response isn't from our origin
+
+              if (requestURL.hostname === 'en.wikipedia.org' || requestURL.hostname === 'upload.wikimedia.org') {
+                shouldCache = cacheNameWikipedia;
+              } else {
+                // just let response pass through, don't cache
+              }
+
+            }
+
+            if (shouldCache) {
+              var responseToCache = response.clone();
+
+              caches.open(shouldCache)
+                .then(function(cache) {
+                  var cacheRequest = event.request.clone();
+                  cache.put(cacheRequest, responseToCache);
+                });
+            }
 
             return response;
           }
@@ -55,18 +85,4 @@ self.addEventListener('fetch', function (event) {
   );
 });
 
-self.addEventListener('activate', function (event) {
-  console.log('activate');
-  event.waitUntil(
-    caches.keys()
-      .then(function(cacheNames) {
-        return Promise.all(
-          cacheNames.map(function(cacheName) {
-            if (cacheName !== cacheVersion) {
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-  );
-});
+
