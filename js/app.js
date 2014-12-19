@@ -61,13 +61,14 @@
   });
 
   function updateNetworkStatus () {
+    searchBox.value = '';
+
     if (navigator.onLine) {
       searchBox.removeAttribute('disabled');
       searchBox.setAttribute('placeholder', 'Search');
     } else {
       closeSuggestions();
       searchBox.setAttribute('disabled', 'disabled');
-      searchBox.value = '';
       searchBox.setAttribute('placeholder', 'No connection - try history');
     }
   }
