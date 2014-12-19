@@ -1,6 +1,6 @@
 importScripts('js/serviceworker-cache-polyfill.js');
 //vbump2
-var cacheNameStatic = 'r3search-static-v3';
+var cacheNameStatic = 'r3search-static-v4';
 var cacheNameWikipedia = 'r3search-wikipedia-v1';
 var cacheNameTypekit = 'r3search-typekit-v1';
 
