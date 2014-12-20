@@ -25,6 +25,7 @@ body {
 
 h1, h2, h3 {
   font-family: bebas-neue, sans-serif;
+  font-weight: normal;
 }
 
 h1 {
@@ -183,10 +184,14 @@ img.thumb {
 }
 
 
-.article {
+.article-content {
   line-height: 1.5em;
 }
 
+.article-link {
+  margin-top: 1em;
+  font-size: 0.9em;
+}
 
 .loading {
   display: none;

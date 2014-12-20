@@ -33,8 +33,9 @@
   var suggestionsNone = document.querySelector(".suggestions .empty-list");
   var suggestionsLoading = document.querySelector(".suggestions-loading");
 
-  var articleContent = document.querySelector(".article");
-  var articleTitle = document.querySelector(".title");
+  var articleContent = document.querySelector(".article-content");
+  var articleTitle = document.querySelector(".article-title");
+  var articleLink = document.querySelector(".article-link");
   var articleLoading = document.querySelector(".article-loading");
 
   var searchForm = document.querySelector(".search");
@@ -254,7 +255,7 @@
 
   // Find an article on Wikipedia
   function find(title) {
-    var page, extract, titleText, thumb, img;
+    var page, extract, titleText, thumb, img, url, link;
 
     articleContent.innerHTML = "";
     articleTitle.innerHTML = "";
@@ -305,6 +306,13 @@
 
       articleContent.innerHTML += extract;
       articleTitle.textContent = titleText;
+
+      url = "http://en.wikipedia.org/wiki/" + titleText;
+      link = document.createElement("a");
+      link.textContent = url;
+      link.setAttribute("href", url);
+      articleLink.appendChild(link);
+
     }, function (err) {
       hideArticleLoading();
 
