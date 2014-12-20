@@ -259,6 +259,7 @@
 
     articleContent.innerHTML = "";
     articleTitle.innerHTML = "";
+    articleLink.innerHTML = "";
     showArticleLoading();
 
     jsonp("//en.wikipedia.org/w/api.php", {
