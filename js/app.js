@@ -1,115 +1,126 @@
-(function() {
+(function () {
+  "use strict";
 
-  var lsQueryName = 'r3search-ls-history';
-  var historiesContainer,
-      resultsContainer,
-      form,
-      searchBox,
-      article,
-      title,
-      articleLoading,
-      resultsLoading,
-      resultsNone,
-      historiesNone;
 
+  // Make sure we are accessing over https, if not redirect
+  if ((!location.port || location.port === "80") && location.protocol !== "https:" && location.host !== "localhost") {
+    location.protocol = "https:";
+  }
+
+
+  // Register our ServiceWorker
   if (navigator.serviceWorker) {
-    navigator.serviceWorker.register('/r3search/worker.js', {
-      scope: '/r3search/'
-    }).then(function(reg) {
-      console.log('success', reg);
-    }, function(err) {
-      console.log('fail', err);
+    navigator.serviceWorker.register("/r3search/worker.js", {
+      scope: "/r3search/"
+    }).then(function (reg) {
+      console.log("SW register success", reg);
+    }, function (err) {
+      console.log("SW register fail", err);
     });
   }
 
-  document.addEventListener("DOMContentLoaded", function (event) {
 
-    historiesContainer = document.querySelector('.histories');
-    resultsContainer = document.querySelector('.results');
+  // localStorage keys
+  var lsQueryName = "r3search-ls-history";
 
-    article = document.querySelector('.article');
-    title = document.querySelector('.title');
 
-    articleLoading = document.querySelector('.article-loading');
-    resultsLoading = document.querySelector('.results-loading');
+  // DOM references
+  var historyContainer = document.querySelector(".history");
+  var historyNone = document.querySelector(".history .empty-list");
+  var historyButton = document.querySelector(".history-button");
 
-    resultsNone = document.querySelector('.results .empty-list');
-    historiesNone = document.querySelector('.histories .empty-list');
+  var suggestionsContainer = document.querySelector(".suggestions");
+  var suggestionsNone = document.querySelector(".suggestions .empty-list");
+  var suggestionsLoading = document.querySelector(".suggestions-loading");
 
-    historiesContainer.addEventListener('click', clickFind);
-    resultsContainer.addEventListener('click', clickFind);
-    updateHistory();
+  var articleContent = document.querySelector(".article");
+  var articleTitle = document.querySelector(".title");
+  var articleLoading = document.querySelector(".article-loading");
 
-    form = document.querySelector('.search');
-    form.addEventListener('submit', formSubmit);
+  var searchForm = document.querySelector(".search");
+  var searchBox = searchForm.querySelector("[name=query]");
 
-    searchBox = form.querySelector('[name=query]');
 
-    var buttonHistory = document.querySelector('.history');
-    buttonHistory.addEventListener('click', function (event) {
-      if (form.classList.contains('history-open')) {
-        closeHistory();
-      } else {
-        openHistory();
-      }
-    });
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-    updateNetworkStatus();
-
-  });
-
-  function updateNetworkStatus () {
-    searchBox.value = '';
+  // Enable/disable search functionality based on network availability
+  function updateNetworkStatus() {
+    searchBox.value = "";
 
     if (navigator.onLine) {
-      searchBox.removeAttribute('disabled');
-      searchBox.setAttribute('placeholder', 'Search');
+      searchBox.removeAttribute("disabled");
+      searchBox.setAttribute("placeholder", "Search");
     } else {
       closeSuggestions();
-      searchBox.setAttribute('disabled', 'disabled');
-      searchBox.setAttribute('placeholder', 'No connection - try history');
+      searchBox.setAttribute("disabled", "disabled");
+      searchBox.setAttribute("placeholder", "No connection - try history");
     }
   }
 
-  function openHistory () {
+
+  // History button was clicked
+  function clickHistoryButton(event) {
+    event.preventDefault();
+
+    if (searchForm.classList.contains("history-open")) {
+      closeHistory();
+    } else {
+      openHistory();
+    }
+  }
+
+
+  // Open history list
+  function openHistory() {
     closeSuggestions();
-    form.classList.add('history-open');
+    searchForm.classList.add("history-open");
   }
 
-  function closeHistory () {
-    form.classList.remove('history-open');
+
+  // Close history list
+  function closeHistory() {
+    searchForm.classList.remove("history-open");
   }
 
-  function openSuggestions () {
+
+  // Open suggestions list
+  function openSuggestions() {
     closeHistory();
-    resultsContainer.classList.add('results-open');
+    suggestionsContainer.classList.add("suggestions-open");
   }
 
-  function closeSuggestions () {
-    resultsContainer.classList.remove('results-open');
+
+  // Close suggestions list
+  function closeSuggestions() {
+    suggestionsContainer.classList.remove("suggestions-open");
   }
 
-  function showResultsLoading () {
-    resultsLoading.classList.add('show');
+
+  // Show suggestions loading icon
+  function showsuggestionsLoading() {
+    suggestionsLoading.classList.add("show");
   }
 
-  function hideResultsLoading () {
-    resultsLoading.classList.remove('show');
 
+  // Hide suggestions loading icon
+  function hidesuggestionsLoading() {
+    suggestionsLoading.classList.remove("show");
   }
 
-  function showArticleLoading () {
-    articleLoading.classList.add('show');
+
+  // Show article loading icon
+  function showArticleLoading() {
+    articleLoading.classList.add("show");
   }
 
-  function hideArticleLoading () {
-    articleLoading.classList.remove('show');
+
+  // Hide article loading icon
+  function hideArticleLoading() {
+    articleLoading.classList.remove("show");
   }
 
-  function clickFind (event) {
-    if (event.target.classList.contains('query-load')) {
+
+  // A link to an article was clicked
+  function clickArticle(event) {
+    if (event.target.classList.contains("article-load")) {
       event.preventDefault();
 
       var query = event.target.dataset.query;
@@ -120,181 +131,197 @@
     }
   }
 
-  function updateHistory () {
-    var histories = localStorage.getItem(lsQueryName);
-    var historiesList = historiesContainer.querySelector('.histories-list');
 
-    if (histories && histories.length) {
-      historiesNone.classList.remove('show');
+  // Update history list
+  function updateHistory() {
+    var link;
+    var history = localStorage.getItem(lsQueryName);
+    var historyList = historyContainer.querySelector(".history-list");
 
-      historiesList.innerHTML = '';
-      histories = JSON.parse(histories);
-      histories.forEach(function (query) {
+    if (history && history.length) {
+      historyNone.classList.remove("show");
 
-        var link = document.createElement('a');
+      historyList.innerHTML = "";
+      history = JSON.parse(history);
+      history.forEach(function (query) {
+
+        link = document.createElement("a");
         link.textContent = query;
-        link.setAttribute('href', '#');
-        link.setAttribute('data-query', query);
-        link.setAttribute('class', 'query-load');
+        link.setAttribute("href", "#");
+        link.setAttribute("data-query", query);
+        link.setAttribute("class", "article-load");
 
-        historiesList.appendChild(link);
+        historyList.appendChild(link);
       });
 
     } else {
 
-      historiesNone.classList.add('show');
+      historyNone.classList.add("show");
 
     }
   }
 
-  function saveQuery (query) {
-    var histories = localStorage.getItem(lsQueryName);
-    if (histories) {
-      histories = JSON.parse(histories);
+
+  // Save an article to the history
+  function saveArticle(title) {
+    var history = localStorage.getItem(lsQueryName);
+
+    if (history) {
+      history = JSON.parse(history);
     } else {
-      histories = [];
+      history = [];
     }
 
-    if(histories.indexOf(query) === -1) {
-      histories.push(query);
+    if (history.indexOf(title) === -1) {
+      history.push(title);
     }
 
-    localStorage.setItem(lsQueryName, JSON.stringify(histories));
+    localStorage.setItem(lsQueryName, JSON.stringify(history));
 
     updateHistory();
   }
 
-  function formSubmit (event) {
+
+  // Search form was sumitted
+  function submitSearchForm(event) {
     event.preventDefault();
 
-    search(this.query.value);
+    search(event.currentTarget.query.value);
   }
 
-  function search (query) {
+
+  // Search wikipedia for the search query
+  function search(query) {
     closeHistory();
 
     if (query) {
-      resultsNone.classList.remove('show');
+      suggestionsNone.classList.remove("show");
 
-      var resultsList = resultsContainer.querySelector('.results-list');
+      var suggestions;
+      var link;
+      var suggestionsList = suggestionsContainer.querySelector(".suggestions-list");
 
-      resultsList.innerHTML = '';
-      showResultsLoading();
+      suggestionsList.innerHTML = "";
+      showsuggestionsLoading();
       openSuggestions();
 
-      jsonp('//en.wikipedia.org/w/api.php', {
-        format: 'json',
-        action: 'opensearch',
+      jsonp("//en.wikipedia.org/w/api.php", {
+        format: "json",
+        action: "opensearch",
         search: query,
         limit: 5,
         titles: query
       }, function (response) {
-        hideResultsLoading();
+        hidesuggestionsLoading();
 
-        console.log('success', response);
+        suggestions = response[1];
 
-        var results = response[1];
+        if (suggestions.length === 0) {
 
-        if(results.length === 0) {
-
-          resultsNone.classList.add('show');
+          suggestionsNone.classList.add("show");
 
         } else {
 
-          if (results.length === 1) {
+          if (suggestions.length === 1) {
 
             closeSuggestions();
-            find(results[0]);
+            find(suggestions[0]);
 
           } else {
 
-            results.forEach(function (result) {
-              var link = document.createElement('a');
-              link.textContent = result;
-              link.setAttribute('href', '#');
-              link.setAttribute('data-query', result);
-              link.setAttribute('class', 'query-load');
-              resultsList.appendChild(link);
+            suggestions.forEach(function (suggestion) {
+              link = document.createElement("a");
+              link.textContent = suggestion;
+              link.setAttribute("href", "#");
+              link.setAttribute("data-query", suggestion);
+              link.setAttribute("class", "article-load");
+              suggestionsList.appendChild(link);
             });
 
           }
         }
 
       }, function (err) {
-        hideResultsLoading();
+        hidesuggestionsLoading();
 
-        console.log('error', err);
+        console.log("error", err);
       });
     } else {
       closeSuggestions();
     }
   }
 
-  function find (query) {
-    article.innerHTML = '';
-    title.innerHTML = '';
+
+  // Find an article on Wikipedia
+  function find(title) {
+    var page, extract, titleText, thumb, img;
+
+    articleContent.innerHTML = "";
+    articleTitle.innerHTML = "";
     showArticleLoading();
 
-    jsonp('//en.wikipedia.org/w/api.php', {
-      format: 'json',
-      action: 'query',
-      continue: '',
-      prop: 'extracts|pageimages',
+    jsonp("//en.wikipedia.org/w/api.php", {
+      format: "json",
+      action: "query",
+      continue: "",
+      prop: "extracts|pageimages",
       exsentences: 10,
       exlimit: 1,
       explaintext: true,
-      piprop: 'thumbnail',
+      piprop: "thumbnail",
       pithumbsize: 200,
       redirects: true,
-      titles: query
+      titles: title
     }, function (response) {
       hideArticleLoading();
 
-      console.log('success', response);
+      console.log("success", response);
 
-      var page;
+      page;
       for(var pageId in response.query.pages) {
         page = response.query.pages[pageId];
       }
 
-      var extract = page.extract;
-      var titleText = page.title;
-      var thumb = false;
+      extract = page.extract;
+      titleText = page.title;
+      thumb = false;
 
       if (page.thumbnail && page.thumbnail.source) {
         thumb = page.thumbnail.source;
       }
 
       if (!extract) {
-        extract = 'No matching article';
+        extract = "No matching article";
       } else {
-        saveQuery(titleText);
+        saveArticle(titleText);
       }
 
       if (thumb) {
-        var img = document.createElement('img');
-        img.setAttribute('src', thumb);
-        img.setAttribute('class', 'thumb');
-        article.appendChild(img);
+        img = document.createElement("img");
+        img.setAttribute("src", thumb);
+        img.setAttribute("class", "thumb");
+        articleContent.appendChild(img);
       }
 
-      article.innerHTML += extract;
-      title.textContent = titleText;
+      articleContent.innerHTML += extract;
+      articleTitle.textContent = titleText;
     }, function (err) {
       hideArticleLoading();
 
-      console.log('error', err);
+      console.log("error", err);
     });
   }
 
-  function jsonp (url, data, callback, onerror) {
-    var callbackName = 'jsonp_callback';  // + Math.round(100000 * Math.random());
 
-    var script = document.createElement('script');
-    script.src = url + '?' + getParams(data) + '&callback=' + callbackName;
+  // Make a JSON-P request
+  function jsonp(url, data, callback, onerror) {
+    var callbackName = "jsonp_callback";
+
+    var script = document.createElement("script");
+    script.src = url + "?" + getParams(data) + "&callback=" + callbackName;
     script.onerror = onerror;
 
-    window[callbackName] = function(data) {
+    window[callbackName] = function (data) {
       delete window[callbackName];
       document.body.removeChild(script);
       callback(data);
@@ -303,7 +330,9 @@
     document.body.appendChild(script);
   }
 
-  function getParams (obj) {
+
+  // form a GET query string from object
+  function getParams(obj) {
     var str = "";
     for (var key in obj) {
         if (str !== "") {
@@ -314,5 +343,19 @@
 
     return str;
   }
+
+
+  // Event listeners
+  historyContainer.addEventListener("click", clickArticle);
+  suggestionsContainer.addEventListener("click", clickArticle);
+  searchForm.addEventListener("submit", submitSearchForm);
+  historyButton.addEventListener("click", clickHistoryButton);
+  window.addEventListener("online", updateNetworkStatus);
+  window.addEventListener("offline", updateNetworkStatus);
+
+
+  // Initialisation
+  updateHistory();
+  updateNetworkStatus();
 
 }());
