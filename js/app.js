@@ -4,7 +4,7 @@
 
   // Make sure we are accessing over https, if not redirect
   if ((!location.port || location.port === "80") && location.protocol !== "https:" && location.host !== "localhost") {
-    location.protocol = "https:";
+    //location.protocol = "https:";
   }
 
 
