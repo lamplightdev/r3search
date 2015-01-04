@@ -75,13 +75,13 @@ footer {
 }
 
 
-.article-load {
+.article-load, .history-clear {
   display: block;
 
   border-bottom: 1px solid #eee;
   padding: 1em 0.5em;
 }
-  .article-load:last-child {
+  .article-load:last-child, .history-clear:last-child {
     border-bottom: 0;
   }
 
@@ -212,5 +212,18 @@ img.thumb {
 }
 
   .empty-list.show {
+    display: block;
+  }
+
+.history-clear {
+  display: none;
+  text-align: right;
+  padding: 1em 0;
+
+  font-size: 0.8em;
+  font-style: italic;
+}
+
+  .history-clear.show {
     display: block;
   }

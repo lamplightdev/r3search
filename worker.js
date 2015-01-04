@@ -8,7 +8,7 @@
 
 
   // Include SW cache polyfill
-  importScripts("js/serviceworker-cache-polyfill.js");
+  importScripts("/r3search/js/serviceworker-cache-polyfill.js");
 
 
   // Cache name definitions

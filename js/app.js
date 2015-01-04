@@ -19,15 +19,15 @@
     });
   }
 
-
   // localStorage keys
-  var lsQueryName = "r3search-ls-history";
+  var lsHistoryID = "r3search-ls-history";
 
 
   // DOM references
   var historyContainer = document.querySelector(".history");
   var historyNone = document.querySelector(".history .empty-list");
   var historyButton = document.querySelector(".history-button");
+  var historyClear = document.querySelector(".history-clear");
 
   var suggestionsContainer = document.querySelector(".suggestions");
   var suggestionsNone = document.querySelector(".suggestions .empty-list");
@@ -40,6 +40,9 @@
 
   var searchForm = document.querySelector(".search");
   var searchBox = searchForm.querySelector("[name=query]");
+
+  // options
+  var optHistorySize = 10;
 
 
   // Enable/disable search functionality based on network availability
@@ -129,6 +132,10 @@
 
       closeHistory();
       closeSuggestions();
+    } else if (event.target.classList.contains("history-clear")) {
+      event.preventDefault();
+
+      clearHistory();
     }
   }
 
@@ -136,36 +143,51 @@
   // Update history list
   function updateHistory() {
     var link;
-    var history = localStorage.getItem(lsQueryName);
+    var history = localStorage.getItem(lsHistoryID);
     var historyList = historyContainer.querySelector(".history-list");
 
-    if (history && history.length) {
-      historyNone.classList.remove("show");
+    historyList.innerHTML = "";
 
-      historyList.innerHTML = "";
+    if (history) {
       history = JSON.parse(history);
-      history.forEach(function (query) {
 
-        link = document.createElement("a");
-        link.textContent = query;
-        link.setAttribute("href", "#");
-        link.setAttribute("data-query", query);
-        link.setAttribute("class", "article-load");
+      if (history.length) {
+        historyNone.classList.remove("show");
+        historyClear.classList.add("show");
 
-        historyList.appendChild(link);
-      });
+        history.reverse();
+        history.forEach(function (query) {
+
+          link = document.createElement("a");
+          link.textContent = query;
+          link.setAttribute("href", "#");
+          link.setAttribute("data-query", query);
+          link.setAttribute("class", "article-load");
+
+          historyList.appendChild(link);
+        });
+
+      } else {
+        historyNone.classList.add("show");
+        historyClear.classList.remove("show");
+      }
 
     } else {
-
       historyNone.classList.add("show");
-
+      historyClear.classList.remove("show");
     }
+  }
+
+  function clearHistory() {
+    localStorage.setItem(lsHistoryID, JSON.stringify([]));
+    closeHistory();
+    updateHistory();
   }
 
 
   // Save an article to the history
   function saveArticle(title) {
-    var history = localStorage.getItem(lsQueryName);
+    var history = localStorage.getItem(lsHistoryID);
 
     if (history) {
       history = JSON.parse(history);
@@ -174,10 +196,14 @@
     }
 
     if (history.indexOf(title) === -1) {
+
+      if (history.length >= optHistorySize) {
+        history.shift();
+      }
       history.push(title);
     }
 
-    localStorage.setItem(lsQueryName, JSON.stringify(history));
+    localStorage.setItem(lsHistoryID, JSON.stringify(history));
 
     updateHistory();
   }
@@ -312,6 +338,7 @@
       link = document.createElement("a");
       link.textContent = url;
       link.setAttribute("href", url);
+      link.setAttribute("target", "_blank");
       articleLink.appendChild(link);
 
     }, function (err) {
