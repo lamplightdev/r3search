@@ -18,6 +18,9 @@ body {
 
   font-family: pt-serif, sans-serif;
   font-size: 14px;
+
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 
@@ -47,8 +50,7 @@ header {
   position: fixed;
   z-index: 2;
   background-color: #eee;
-  left: 0;
-  right: 0;
+  top: 0;
 }
 
   header h1 {
@@ -64,8 +66,7 @@ footer {
 
 
 .inner {
-  max-width: 320px;
-  margin: 0 auto;
+
 }
 
 
