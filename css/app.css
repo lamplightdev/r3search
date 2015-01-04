@@ -101,8 +101,8 @@ footer {
     border-right: 0;
     width: 70%;
     padding: 0 1em;
-    font-size: 1em;
-    height: 3em;
+    font-size: 1.2em;
+    height: 2.5em;
   }
 
   .search button[type=submit] {
