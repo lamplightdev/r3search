@@ -76,30 +76,27 @@
 
               var shouldCache = false;
 
-              if (response) {
-                if (response.status === 200 && response.type === "basic") {
-                  shouldCache = cacheNameStatic;
-                } else if (response.type === "opaque") { // if response isn"t from our origin / doesn"t support CORS
-
-                  if (requestURL.hostname.indexOf(".wikipedia.org") > -1) {
-                    shouldCache = cacheNameWikipedia;
-                  } else if (requestURL.hostname.indexOf(".typekit.net") > -1) {
-                    shouldCache = cacheNameTypekit;
-                  } else {
-                    // just let response pass through, don"t cache
-                  }
-
+              if (response.type === "basic" && response.status === 200) {
+                shouldCache = cacheNameStatic;
+              } else if (response.type === "opaque") { // if response isn"t from our origin / doesn"t support CORS
+                if (requestURL.hostname.indexOf(".wikipedia.org") > -1) {
+                  shouldCache = cacheNameWikipedia;
+                } else if (requestURL.hostname.indexOf(".typekit.net") > -1) {
+                  shouldCache = cacheNameTypekit;
+                } else {
+                  // just let response pass through, don"t cache
                 }
 
-                if (shouldCache) {
-                  var responseToCache = response.clone();
+              }
 
-                  caches.open(shouldCache)
-                    .then(function (cache) {
-                      var cacheRequest = event.request.clone();
-                      cache.put(cacheRequest, responseToCache);
-                    });
-                }
+              if (shouldCache) {
+                var responseToCache = response.clone();
+
+                caches.open(shouldCache)
+                  .then(function (cache) {
+                    var cacheRequest = event.request.clone();
+                    cache.put(cacheRequest, responseToCache);
+                  });
               }
 
               return response;

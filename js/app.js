@@ -109,6 +109,16 @@
     suggestionsLoading.classList.remove("show");
   }
 
+  //listen for clicks outside history/suggestions divs and close if necessary
+  function windowClick(event) {
+    if ( !historyContainer.contains(event.target) && !suggestionsContainer.contains(event.target) &&
+        !historyButton.contains(event.target) ) {
+
+      closeHistory();
+      closeSuggestions();
+
+      }
+  }
 
   // Show article loading icon
   function showArticleLoading() {
@@ -388,6 +398,7 @@
   historyButton.addEventListener("click", clickHistoryButton);
   window.addEventListener("online", updateNetworkStatus);
   window.addEventListener("offline", updateNetworkStatus);
+  window.addEventListener("click", windowClick);
 
 
   // Initialisation
