@@ -1,0 +1,13 @@
+{
+  "name": "R3SEARCH",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "img/logo.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "density": "2"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#CD000A">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" sizes="192x192" href="img/logo.png">
+
+    <title>R3SEARCH</title>
+
+    <link rel='stylesheet' href='css/app.css'>
+
+    <script src="//use.typekit.net/aqb7rox.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+</head>
+
+<body>
+
+  <header>
+    <div class='inner'>
+      <h1>R3SEARCH</h1>
+    </div>
+  </header>
+
+  <div class='content'>
+    <div class='inner'>
+
+      <form class='search'>
+        <input type='text' name='query'>
+        <button type='submit'>Search</button>
+        <button class='history-button' type='button'>
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+            <path d="M367 295.5H227.5V142h45v108.5H367V295.5z M256 95c-88.992 0-161 72.022-161 161 c0 89 72 161 161 161c88.992 0 161-72.023 161-161C417 167 345 95 256 95 M256 50c113.771 0 206 92.2 206 206 s-92.229 206-206 206S50 369.8 50 256S142.229 50 256 50z"/>
+          </svg>
+        </button>
+
+        <div class='history'>
+          <div class='empty-list'>History empty</div>
+          <div class='history-list'></div>
+          <a href='#' class='history-clear'>clear history</a>
+        </div>
+
+        <div class='suggestions'>
+          <img src='img/loading.svg' alt='loading' class='loading suggestions-loading'>
+          <div class='empty-list'>No matches</div>
+          <div class='suggestions-list'></div>
+        </div>
+
+      </form>
+
+      <img src='img/loading.svg' alt='loading' class='loading article-loading'>
+
+      <h1 class='article-title'></h1>
+      <div class='article-content'></div>
+      <div class='article-link'></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class='inner'>
+      all articles from <a href='http://en.wikipedia.org/' target="_blank">wikipedia</a> <br>
+      <a href='https://github.com/lamplightdev/r3search/tree/gh-pages' target="_blank">view source on github</a> &middot;
+      <a href='https://blog.lamplightdev.com' target="_blank">blog post</a> &middot;
+      made by <a href='https://twitter.com/lamplightdev' target="_blank">@lamplightdev</a>
+    </div>
+  </footer>
+
+  <script src='js/app.js'></script>
+
+</body>
+
+</html>
